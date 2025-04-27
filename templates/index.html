@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herkey - India's Largest Women Network</title>
+    
+    <!-- Favicon links -->
+    <link rel="shortcut icon" href="/static/favicon.png">
+    <link rel="stylesheet" href="static/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-header">
+            <img src="/static/herkey-logo.svg" alt="HERKEY Logo" class="logo">
+            <h1>Meet Asha</h1>
+            <p>Your HERKEY Virtual Assistant</p>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    Welcome to Herkey! This is Asha-AI, your virtual assistant to help you with our sessions/events/career. How may I assist you today?
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                Thinking...
+            </div>
+            
+            <div class="chat-input-container">
+                <form class="chat-input-form" id="chat-form">
+                    <input type="text" 
+                           class="chat-input" 
+                           id="user-input" 
+                           placeholder="Type your message here..."
+                           required>
+                    <button type="button" class="voice-button" id="voice-button">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button type="submit" class="send-button">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/js/chat.js"></script>
+
+    <script>
+    function createProductButtons(response, products) {
+        try {
+            // Parse the structured response
+            const parsedResponse = JSON.parse(response);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            // Add the conversational message
+            messageDiv.innerHTML = `<p>${parsedResponse.message}</p>`;
+            
+            // Add product buttons
+            if (parsedResponse.recommended_products && parsedResponse.recommended_products.length > 0) {
+                const productButtonsDiv = document.createElement('div');
+                productButtonsDiv.className = 'product-buttons';
+                
+                parsedResponse.recommended_products.forEach(product => {
+                    // Find matching product URL from backend data
+                    const productData = products.find(p => p.title.toLowerCase() === product.name.toLowerCase());
+                    if (productData) {
+                        const button = document.createElement('a');
+                        button.href = productData.url;
+                        button.className = 'product-button';
+                        button.target = '_blank';
+                        button.innerHTML = `
+                            <strong>${product.name}</strong>
+                            <span class="price">${product.programcategory}</span>
+                            <span class="reason">${product.reason}</span>
+                        `;
+                        productButtonsDiv.appendChild(button);
+                    }
+                });
+                
+                messageDiv.appendChild(productButtonsDiv);
+            }
+            
+            return messageDiv;
+        } catch (e) {
+            console.error('Error parsing response:', e);
+            // Fallback to displaying raw response
+            return `<div class="message">${response}</div>`;
+        }
+    }
+    </script>
+
+    <style>
+    .product-button {
+        display: block;
+        margin: 10px 0;
+        padding: 12px;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s;
+    }
+
+    .product-button:hover {
+        background: #e9e9e9;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .product-button strong {
+        display: block;
+        color: #008066;
+    }
+
+    .product-button .price {
+        display: block;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .product-button .reason {
+        display: block;
+        font-size: 0.8em;
+        margin-top: 5px;
+        color: #777;
+    }
+    </style>
+</body>
+</html>
